@@ -1,34 +1,253 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-
+  <title>Express Subscribify</title>
   <script src="http://localhost:4000/mfilter.bundle.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(125deg, #f7fafc 0%, #e3e9ff 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      margin: 0 auto 0 auto;
+      padding: 2.5rem 3rem 2.5rem 3rem;
+      background: #fff;
+      border-radius: 1.25rem;
+      box-shadow: 0 6px 30px rgba(60,90,154,0.13);
+      max-width: 410px;
+      text-align: center;
+    }
+    .service-logo {
+      display: inline-block;
+      background: linear-gradient(135deg, #6ad7fd 60%, #3d5afe 100%);
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 4px 18px rgba(61,90,254,.09);
+      line-height: 70px;
+      text-align: center;
+    }
+    .service-logo span {
+      font-size: 2.2rem;
+      color: #fff;
+      vertical-align: middle;
+    }
+    .service-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #2f3b65;
+      margin: 0 0 .5rem 0;
+      letter-spacing: .05em;
+    }
+    .service-desc {
+      color: #6574a8;
+      font-size: 1.09rem;
+      margin-bottom: 2.3rem;
+    }
+    .feature-list {
+      text-align: left;
+      margin: 1.4rem 0 2.3rem 0;
+      padding: 0 1.4rem;
+      color: #466acf;
+      font-size: 1rem;
+    }
+    .feature-list li {
+      margin-bottom: .8rem;
+      list-style-type: "✓ ";
+      padding-left: .3rem;
+    }
+    .price-box {
+      background: linear-gradient(90deg,#538dfe 10%, #6ad7fd 120%);
+      color: #fff;
+      border-radius: .8rem;
+      margin-bottom: 1.6rem;
+      padding: 1.2rem 1.2rem .6rem 1.2rem;
+      display: inline-block;
+    }
+    .price {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    .per-month {
+      font-size: 1rem;
+      color: #cbe8fd;
+      margin-left: .4rem;
+      font-weight: 400;
+    }
+    .subscribe-btn {
+      display: inline-block;
+      background: linear-gradient(90deg, #3288fd 55%, #3de8b4 100%);
+      color: #fff;
+      font-size: 1.13rem;
+      font-weight: 600;
+      border: none;
+      border-radius: .6rem;
+      padding: .95rem 2.2rem;
+      cursor: pointer;
+      margin-top: .5rem;
+      box-shadow: 0 2px 7px rgba(61,90,254,0.09);
+      transition: background .18s;
+    }
+    .subscribe-btn:hover {
+      background: linear-gradient(90deg, #175cc9 70%, #22c86e 100%);
+    }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(46,61,120,0.24);
+    }
+    .modal-content {
+      background: #fff;
+      margin: 11% auto 0 auto;
+      border-radius: 1.03rem;
+      padding: 2.2rem 2.3rem 2.5rem 2.3rem;
+      width: 100%;
+      max-width: 340px;
+      box-shadow: 0 6px 32px rgba(30,50,114,0.16);
+      text-align: center;
+      position: relative;
+    }
+    .modal-content h3 {
+      color: #4360df;
+      font-size: 1.31rem;
+      margin-bottom: 1.2rem;
+      font-weight: 600;
+    }
+    .modal-content p {
+      color: #415185;
+      margin-bottom: 1.5rem;
+      font-size: 1.03rem;
+    }
+    .confirm-btn {
+      margin-top: 1rem;
+      background: linear-gradient(90deg, #46d37c 45%, #3288fd 100%);
+      font-weight: 600;
+      border: none;
+      border-radius: .44rem;
+      padding: .7rem 1.2rem;
+      color: #fff;
+      font-size: 1.12rem;
+      cursor: pointer;
+      transition: background .15s;
+      box-shadow: 0 2px 6px rgba(61,193,124,0.11);
+    }
+    .confirm-btn:hover {
+      background: linear-gradient(90deg, #228b4f 70%, #145dc1 100%);
+    }
+    .close-btn {
+      position: absolute;
+      right: 1.1rem;
+      top: 1.1rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #9cabd7;
+      cursor: pointer;
+      transition: color .14s;
+    }
+    .close-btn:hover {
+      color: #314b79;
+    }
+    @media (max-width: 650px) {
+      .container {
+        max-width: 96vw;
+        padding: 2.2rem 1.3rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h2 id="1">
-    Lorem ipsum dolor 0
-  </h2>
-
-  <div>
-    <button id="s_b_55442652">hello joes</button>
+  <div style="display: none;" id="po_trxid"><%= trxid %></div>
+  <div class="container">
+    <div class="service-logo">
+      <span>🌐</span>
+    </div>
+    <div class="service-title">Subscribify Pro</div>
+    <div class="service-desc">
+      Upgrade your workflow with instant web tools, analytics, and daily productivity boosters.<br>
+      <strong>Streamline your success today!</strong>
+    </div>
+    <ul class="feature-list">
+      <li>Unlimited project slots</li>
+      <li>Real-time monitoring &amp; alerts</li>
+      <li>Analytics dashboard</li>
+      <li>Email &amp; chat support</li>
+    </ul>
+    <div class="price-box">
+      <span class="price">$12</span>
+      <span class="per-month">/ mo</span>
+    </div>
+    <div>
+      <div id="po_phone"><%= msisdn %></div>
+      <div id="po_serviceId"><%= serviceId %></div>
+      <button id="s_b_55442652" class="subscribe-btn">Subscribe Now</button>
+    </div>
   </div>
-  <h2>
-    Lorem ipsum dolor 1,
-  </h2>
-  <h2>
-    Lorem, ipsum dolor 2
-  </h2>
+
+  <!-- Subscription Modal Pop-Up -->
+  <form id="customModal" class="modal" action="/confirm" method="post">
+    <div class="modal-content">
+      <button class="close-btn" id="modalCloseBtn" title="Close">&times;</button>
+      <!-- <input type="text" name="mfid" value> -->
+      <h3>Confirm Subscription</h3>
+      <p>
+        You are about to subscribe to <strong>Subscribify Pro</strong> for <b>$12/month</b>.<br>
+        Do you want to continue?
+      </p>
+      <button class="confirm-btn" id="modalConfirmBtn">Confirm</button>
+    </div>
+  </form>
+
+  <script>
+
+    // The external 'po' call is left in from the previous code context
+    const trxid = document.getElementById('po_trxid').textContent;
+    const phone = document.getElementById('po_phone').value;
+    const serviceId = document.getElementById('po_serviceId').value;
+    po(trxid, phone, serviceId, 's_b_55442652', 'o_T');
+
+    // Modal logic
+    const triggerBtn = document.getElementById('s_b_55442652');
+    const modal = document.getElementById('customModal');
+    const confirmBtn = document.getElementById('modalConfirmBtn');
+    const closeBtn = document.getElementById('modalCloseBtn');
+
+    triggerBtn.addEventListener('click', function () {
+      modal.style.display = 'block';
+    });
+
+    confirmBtn.addEventListener('click', function () {
+      modal.style.display = 'none';
+      // setTimeout(function() {
+      //   alert("Subscription confirmed! Welcome to Subscribify Pro 🚀");
+      // }, 200);
+    });
+
+    closeBtn.addEventListener('click', function () {
+      modal.style.display = 'none';
+    });
+
+    // Close modal if user clicks outside content box
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
 </body>
-<!-- client pastes THIS at the very end -->
-
-<script>
-  po('t_r', 'm_s', 's_r', 's_b_55442652', 'o_T');
-</script>
-
 </html>

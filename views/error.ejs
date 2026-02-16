@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Service Error</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background: linear-gradient(125deg, #f7fafc 0%, #ead2d2 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .error-container {
+      background: #fff3f3;
+      border-radius: 1.1rem;
+      padding: 2.8rem 2.2rem;
+      box-shadow: 0 4px 24px rgba(220,60,60,0.08);
+      text-align: center;
+      max-width: 370px;
+    }
+    .error-icon {
+      font-size: 2.7rem;
+      color: #e04060;
+      margin-bottom: 1.1rem;
+      line-height: 1.1;
+    }
+    .error-title {
+      font-size: 1.45rem;
+      color: #d32f2f;
+      font-weight: bold;
+      margin-bottom: 1.1rem;
+    }
+    .error-message {
+      color: #ad5757;
+      font-size: 1.11rem;
+      margin-bottom: 1.8rem;
+    }
+    .retry-btn {
+      background: linear-gradient(90deg, #ef5350 70%, #c62828 100%);
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(218,80,80,0.13);
+      transition: background 0.15s;
+    }
+    .retry-btn:hover {
+      background: linear-gradient(90deg, #b71c1c 90%, #ff7043 100%);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-icon">😞</div>
+    <div class="error-title">Service Failed</div>
+    <% if (typeof bot_reason !== 'undefined' && bot_reason) { %>
+      <div class="error-extra">
+        <div class="bot-reason-label" style="font-weight:600; font-size:1.03rem; color:#b71c1c; margin-bottom:0.15rem;">Reason:</div>
+        <div class="error-message bot-reason" style="margin-bottom:0.65rem;">
+          <%= bot_reason %>
+        </div>
+        <% if (typeof bot_severity !== 'undefined' && bot_severity) { %>
+          <div class="bot-severity-label" style="font-weight:600; font-size:0.97rem; color:#d32f2f; margin-bottom:0.1rem;">Severity:</div>
+          <div class="error-message bot-severity" style="margin-bottom:0;">
+            <%= bot_severity %>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+    <div class="error-message">
+      Sorry, something went wrong while processing your request.<br>
+      Please try again or come back later.
+    </div>
+    <button class="retry-btn" onclick="window.location.reload();">Retry</button>
+  </div>
+</body>
+</html>
