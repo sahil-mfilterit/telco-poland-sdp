@@ -5,7 +5,8 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const BASE_URL = "https://telco-poland.mfilterit.net";
+// const BASE_URL = "http://localhost:3001";
 const app = express();
 const PORT = 3000;
 
@@ -29,7 +30,7 @@ app.get("/:msisdn/:serviceId", async (req, res) => {
   const trxId = generatetrxid();
   const { msisdn, serviceId } = req.params;
   try {
-    const configuredMfid = await fetch('http://localhost:4000/welcome/initate-transaction', {
+    const configuredMfid = await fetch(`${BASE_URL}/welcome/initate-transaction`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -41,6 +42,9 @@ app.get("/:msisdn/:serviceId", async (req, res) => {
       })
     });
 
+    console.log("====================================>>>>")
+    console.log(configuredMfid);
+    console.log("====================================>>>>")
     const response = await configuredMfid.json();
     console.log(response);
     if (!response.data) {
@@ -56,16 +60,15 @@ app.get("/:msisdn/:serviceId", async (req, res) => {
       serviceId: serviceId
     });
   } catch (error) {
-    // console.error('Error:', error);
+    console.error('Error:', error);
     res.redirect("/error");
   }
 
 });
 
-
 app.post("/confirm", async (req, res) => {
   try{
-    let  response = await fetch(`http://localhost:4000/welcome/get-status?mfId=${cachedMfid}`);
+    let  response = await fetch(`${BASE_URL}/welcome/get-status?mfId=${cachedMfid}`);
     response = await response.json();
     console.log(response);
     if (!response.data) {
