@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { error } from "console";
 import express from "express";
 import path from "path";
@@ -5,8 +6,8 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const BASE_URL = "https://telco-poland.mfilterit.net";
-// const BASE_URL = "http://localhost:3001";
+// const BASE_URL = "https://telco-poland.mfilterit.net";
+const BASE_URL = "http://localhost:3001";
 const app = express();
 const PORT = 3000;
 
@@ -30,7 +31,7 @@ app.get("/:msisdn/:serviceId", async (req, res) => {
   const trxId = generatetrxid();
   const { msisdn, serviceId } = req.params;
   try {
-    const configuredMfid = await fetch(`${BASE_URL}/welcome/initate-transaction`, {
+    const configuredMfid = await fetch(`${BASE_URL}/initiate-transaction`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -68,14 +69,25 @@ app.get("/:msisdn/:serviceId", async (req, res) => {
 
 app.post("/confirm", async (req, res) => {
   try{
-    let  response = await fetch(`${BASE_URL}/welcome/get-status?mfId=${cachedMfid}`);
+    let  response = await fetch(`${BASE_URL}/get-status?mfId=${cachedMfid}`);
     response = await response.json();
     console.log(response);
+
+
+    let payload;
+    let data = null;
+    try {
+      payload = jwt.verify(response.data.token, 'abc123xyz');
+      data = payload.bot
+      console.log('JWT payload:', payload);
+    } catch (err) {
+      console.error('JWT verification failed:', err);
+      return res.redirect("/error");
+    }
     if (!response.data) {
       throw new Error(`Failed to get status: ${response.status} ${response.statusText}`);
     }
 
-    let data = response.data;
     if (data.bot_status === 1) {
       res.redirect("/error?bot_reason=" + data.bot_reason + "&bot_severity=" + data.bot_severity);
     }
